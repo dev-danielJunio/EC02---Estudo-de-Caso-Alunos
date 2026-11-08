@@ -11,6 +11,29 @@
 
     <main class="container">
         <h3>Relatórios</h3>
+        <button type="button" class="btn btn-primary mb-3" id="atualizar-relatorios">Atualizar relatórios</button>
+
+        <h4>Média salarial</h4>
+        <p id="media-salarial"></p>
+
+        <h4>Funcionários com salário acima de R$ 5.000,00</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Idade</th>
+                    <th>Cargo</th>
+                    <th>Salário</th>
+                </tr>
+            </thead>
+            <tbody id="salarios-altos-lista"></tbody>
+        </table>
+
+        <h4>Cargos únicos</h4>
+        <ul id="cargos-lista"></ul>
+
+        <h4>Nomes em maiúsculo</h4>
+        <ul id="nomes-lista"></ul>
     </main>
 
     <script>
@@ -20,5 +43,6 @@
                 document.getElementById('header-container').innerHTML = data;
             });
     </script>
+    <script type="module" src="../controllers/relatorioController.js"></script>
 </body>
 </html>

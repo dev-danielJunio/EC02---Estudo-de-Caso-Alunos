@@ -1,8 +1,8 @@
 # EC02 - Funcionários
 
-Cadastro, listagem, edição e exclusão de funcionários com HTML e JavaScript.
+Cadastro, listagem, edição, exclusão e relatórios de funcionários com HTML e JavaScript.
 
-O projeto usa classe com get/set, funções anônimas e arrow functions. Os dados ficam no `localStorage`.
+O projeto usa classe com get/set, funções anônimas, arrow functions e métodos de array. Os dados ficam no `localStorage`.
 
 Para executar:
 
