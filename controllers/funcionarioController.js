@@ -2,9 +2,7 @@ import { Funcionario } from '../models/funcionario.js';
 
 let listaFuncionarios = JSON.parse(localStorage.getItem('listaFuncionarios')) || [];
 let indiceEdicao = null;
-function buscarFuncionario(indice) {
-    return listaFuncionarios[indice];
-}
+const buscarFuncionario = indice => listaFuncionarios[indice];
 
 function salvarFuncionario() {
     const nome = document.getElementById('nome');
@@ -26,9 +24,9 @@ function salvarFuncionario() {
         funcionario.setIdade(idade.value);
         funcionario.setCargo(cargo.value.trim());
         funcionario.setSalario(salario.value);
-        listaFuncionarios = listaFuncionarios.map(function (item, indice) {
-            return indice === indiceEdicao ? funcionario : item;
-        });
+        listaFuncionarios = listaFuncionarios.map((item, indice) =>
+            indice === indiceEdicao ? funcionario : item
+        );
     } else {
         const funcionario = new Funcionario(nome.value.trim(), idade.value, cargo.value.trim(), salario.value);
         listaFuncionarios.push(funcionario);
@@ -53,7 +51,7 @@ function editarFuncionario(indice) {
 
 function cancelarEdicao() {
     indiceEdicao = null;
-    ['nome', 'idade', 'cargo', 'salario'].forEach(function (campo) {
+    ['nome', 'idade', 'cargo', 'salario'].forEach(campo => {
         document.getElementById(campo).value = '';
     });
     const formularioEdicao = document.getElementById('edicao-funcionario');
@@ -62,9 +60,8 @@ function cancelarEdicao() {
 
 function excluirFuncionario(indice) {
     if (!confirm(`Deseja excluir ${listaFuncionarios[indice].nome}?`)) return;
-    listaFuncionarios = listaFuncionarios.filter(function (funcionario, indiceAtual) {
-        return indiceAtual !== indice;
-    });
+    // Antes: function (funcionario, indiceAtual) { return indiceAtual !== indice; }
+    listaFuncionarios = listaFuncionarios.filter((funcionario, indiceAtual) => indiceAtual !== indice);
     localStorage.setItem('listaFuncionarios', JSON.stringify(listaFuncionarios));
     if (indiceEdicao !== null) cancelarEdicao();
     listarFuncionarios();
@@ -77,11 +74,11 @@ function listarFuncionarios() {
     listaFuncionarios = JSON.parse(localStorage.getItem('listaFuncionarios')) || [];
     lista.innerHTML = '';
 
-    listaFuncionarios.forEach(function (funcionario, indice) {
+    listaFuncionarios.forEach((funcionario, indice) => {
         const linha = document.createElement('tr');
         [funcionario.nome, funcionario.idade, funcionario.cargo,
             Number(funcionario.salario).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
-        ].forEach(function (valor) {
+        ].forEach(valor => {
             const coluna = document.createElement('td');
             coluna.textContent = valor;
             linha.appendChild(coluna);
