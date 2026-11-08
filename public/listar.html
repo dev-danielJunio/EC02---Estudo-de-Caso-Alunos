@@ -18,10 +18,35 @@
                     <th>Idade</th>
                     <th>Cargo</th>
                     <th>Salário</th>
+                    <th>Ações</th>
                 </tr>
             </thead>
             <tbody id="funcionarios-lista"></tbody>
         </table>
+
+        <section id="edicao-funcionario" hidden>
+            <h3>Editar Funcionário</h3>
+            <form id="funcionario-form">
+            <div class="mb-3">
+                <label for="nome" class="form-label">Nome:</label>
+                <input type="text" class="form-control" id="nome" name="nome" required>
+            </div>
+            <div class="mb-3">
+                <label for="idade" class="form-label">Idade:</label>
+                <input type="number" class="form-control" id="idade" name="idade" min="1" step="1" required>
+            </div>
+            <div class="mb-3">
+                <label for="cargo" class="form-label">Cargo:</label>
+                <input type="text" class="form-control" id="cargo" name="cargo" required>
+            </div>
+            <div class="mb-3">
+                <label for="salario" class="form-label">Salário:</label>
+                <input type="number" class="form-control" id="salario" name="salario" min="0" step="0.01" required>
+            </div>
+            <button type="button" class="btn btn-primary" id="salvar-funcionario">Salvar alterações</button>
+            <button type="button" class="btn btn-secondary" id="cancelar-edicao">Cancelar</button>
+        </form>
+        </section>
     </main>
 
     <script>

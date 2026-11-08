@@ -1,6 +1,10 @@
 import { Funcionario } from '../models/funcionario.js';
 
 let listaFuncionarios = JSON.parse(localStorage.getItem('listaFuncionarios')) || [];
+let indiceEdicao = null;
+function buscarFuncionario(indice) {
+    return listaFuncionarios[indice];
+}
 
 function salvarFuncionario() {
     const nome = document.getElementById('nome');
@@ -14,15 +18,57 @@ function salvarFuncionario() {
     }
     if (!document.getElementById('funcionario-form').reportValidity()) return;
 
-    const funcionario = new Funcionario(nome.value.trim(), idade.value, cargo.value.trim(), salario.value);
-    listaFuncionarios.push(funcionario);
+    const editando = indiceEdicao !== null;
+    if (editando) {
+        const dados = buscarFuncionario(indiceEdicao);
+        const funcionario = new Funcionario(dados.nome, dados.idade, dados.cargo, dados.salario);
+        funcionario.setNome(nome.value.trim());
+        funcionario.setIdade(idade.value);
+        funcionario.setCargo(cargo.value.trim());
+        funcionario.setSalario(salario.value);
+        listaFuncionarios = listaFuncionarios.map(function (item, indice) {
+            return indice === indiceEdicao ? funcionario : item;
+        });
+    } else {
+        const funcionario = new Funcionario(nome.value.trim(), idade.value, cargo.value.trim(), salario.value);
+        listaFuncionarios.push(funcionario);
+    }
+
     localStorage.setItem('listaFuncionarios', JSON.stringify(listaFuncionarios));
-    nome.value = '';
-    idade.value = '';
-    cargo.value = '';
-    salario.value = '';
-    alert('Funcionário cadastrado com sucesso!');
+    cancelarEdicao();
     listarFuncionarios();
+    alert(editando ? 'Funcionário editado com sucesso!' : 'Funcionário cadastrado com sucesso!');
+}
+
+function editarFuncionario(indice) {
+    const funcionario = buscarFuncionario(indice);
+    indiceEdicao = indice;
+    document.getElementById('nome').value = funcionario.nome;
+    document.getElementById('idade').value = funcionario.idade;
+    document.getElementById('cargo').value = funcionario.cargo;
+    document.getElementById('salario').value = funcionario.salario;
+    document.getElementById('edicao-funcionario').hidden = false;
+    document.getElementById('nome').focus();
+}
+
+function cancelarEdicao() {
+    indiceEdicao = null;
+    ['nome', 'idade', 'cargo', 'salario'].forEach(function (campo) {
+        document.getElementById(campo).value = '';
+    });
+    const formularioEdicao = document.getElementById('edicao-funcionario');
+    if (formularioEdicao) formularioEdicao.hidden = true;
+}
+
+function excluirFuncionario(indice) {
+    if (!confirm(`Deseja excluir ${listaFuncionarios[indice].nome}?`)) return;
+    listaFuncionarios = listaFuncionarios.filter(function (funcionario, indiceAtual) {
+        return indiceAtual !== indice;
+    });
+    localStorage.setItem('listaFuncionarios', JSON.stringify(listaFuncionarios));
+    if (indiceEdicao !== null) cancelarEdicao();
+    listarFuncionarios();
+    alert('Funcionário excluído com sucesso!');
 }
 
 function listarFuncionarios() {
@@ -31,7 +77,7 @@ function listarFuncionarios() {
     listaFuncionarios = JSON.parse(localStorage.getItem('listaFuncionarios')) || [];
     lista.innerHTML = '';
 
-    listaFuncionarios.forEach(function (funcionario) {
+    listaFuncionarios.forEach(function (funcionario, indice) {
         const linha = document.createElement('tr');
         [funcionario.nome, funcionario.idade, funcionario.cargo,
             Number(funcionario.salario).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
@@ -40,6 +86,27 @@ function listarFuncionarios() {
             coluna.textContent = valor;
             linha.appendChild(coluna);
         });
+
+        const acoes = document.createElement('td');
+        const botaoEditar = document.createElement('button');
+        botaoEditar.type = 'button';
+        botaoEditar.className = 'btn btn-warning btn-sm me-2';
+        botaoEditar.textContent = 'Editar';
+        botaoEditar.onclick = function () {
+            editarFuncionario(indice);
+        };
+
+        const botaoExcluir = document.createElement('button');
+        botaoExcluir.type = 'button';
+        botaoExcluir.className = 'btn btn-danger btn-sm';
+        botaoExcluir.textContent = 'Excluir';
+        botaoExcluir.onclick = function () {
+            excluirFuncionario(indice);
+        };
+
+        acoes.appendChild(botaoEditar);
+        acoes.appendChild(botaoExcluir);
+        linha.appendChild(acoes);
         lista.appendChild(linha);
     });
 }
@@ -49,6 +116,12 @@ document.addEventListener('DOMContentLoaded', function () {
     if (botaoSalvar) {
         botaoSalvar.onclick = function () {
             salvarFuncionario();
+        };
+    }
+    const botaoCancelar = document.getElementById('cancelar-edicao');
+    if (botaoCancelar) {
+        botaoCancelar.onclick = function () {
+            cancelarEdicao();
         };
     }
     listarFuncionarios();
